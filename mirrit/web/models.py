@@ -10,6 +10,16 @@ class User(Document):
     def id(self):
         return unicode(self._id)
 
+    @property
+    def user_id(self):
+        return unicode(self._id)
+
+    @staticmethod
+    def get_by_login(cls, username, password):
+        with Mongo:
+            return cls.find({'username': username,
+                             'password': password})
+
     def save(self):
         with Mongo:
             super(User, self).save(self, w=1)
