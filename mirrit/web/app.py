@@ -1,10 +1,28 @@
 import requests
 import simplejson as json
 from flask import Flask, request
+from flaskext import simpleregistration
+
+from .models import User
+from .forms import LoginForm, SignupForm
+
 from gevent.monkey import patch_all
+patch_all()
 
 app = Flask('mirrit')
-patch_all()
+
+simplereg = simpleregistration.SimpleRegistration(
+    app=app,
+    user_model=User,
+    login_url="/login",
+    login_form=LoginForm,
+    login_redirect="home",
+    logout_url="/logout",
+    logout_redirect="home",
+    signup_url="/signup",
+    signup_form=SignupForm,
+    signup_redirect="home"
+)
 
 
 @app.route('/')
