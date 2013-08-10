@@ -2,3 +2,4 @@ gevent
 rq == 0.3.8
 flask == 0.10.1
 jinja2 == 2.7.1
+simplejson == 3.3.0
