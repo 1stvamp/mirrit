@@ -3,3 +3,4 @@ before_install:
         - "sudo apt-get install -y libevent-dev"
 python:
         - "2.7"
+script: "nosetests tests/"
