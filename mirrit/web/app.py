@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, render_template
 from flask.json import loads
 from flaskext import simpleregistration
 from flaskext.github import GithubAuth
@@ -42,7 +42,7 @@ github = GithubAuth(
 
 @app.route('/')
 def home():
-    return 'OK', 200
+    return render_template('index.html')
 
 
 @app.route('/oauth/callback')
