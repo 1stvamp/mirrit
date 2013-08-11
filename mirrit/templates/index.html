@@ -1,1 +1,5 @@
-OK
+{% if g.user %}
+hi!
+{% else %}
+Please <a href="/login">login</a> or <a href="/signup">signup</a>.
+{% endif %}

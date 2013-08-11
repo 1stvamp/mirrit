@@ -27,7 +27,7 @@ class User(Document):
     @staticmethod
     def get_by_login(cls, username, password):
         with Mongo:
-            return cls.find({'username': username,
+            return cls.find_one({'username': username,
                              'password': password})
 
     def persist(self):
@@ -42,7 +42,7 @@ class User(Document):
 class Wrapper(object):
     def get(self, id):
         with Mongo:
-            return User.find({'_id': ObjectId(id)})
+            return User.find_one({'_id': ObjectId(id)})
 
 wrapper = Wrapper()
 User.query = wrapper
