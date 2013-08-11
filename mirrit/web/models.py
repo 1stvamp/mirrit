@@ -12,6 +12,7 @@ class User(Document):
     username = ''
     password = ''
     email = ''
+    github_access_token = ''
     config_database = 'mirrit'
     config_collection = 'users'
 
