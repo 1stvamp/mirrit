@@ -20,6 +20,6 @@ class User(Document):
             return cls.find({'username': username,
                              'password': password})
 
-    def save(self):
+    def persist(self):
         with Mongo:
             super(User, self).save(self, w=1)

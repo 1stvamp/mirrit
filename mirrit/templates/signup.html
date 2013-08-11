@@ -1,0 +1,7 @@
+<form method="POST" action="{{ request.path }}">
+    {{ form.csrf_token }}
+    {{ form.email.label }} {{ form.email(size=20) }}
+    {{ form.username.label }} {{ form.username(size=20) }}
+    {{ form.password.label }} {{ form.password(size=20) }}
+    <input type="submit" value="Signup">
+</form>

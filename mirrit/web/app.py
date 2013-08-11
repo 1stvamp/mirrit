@@ -1,15 +1,14 @@
-import requests
-import simplejson as json
-from flask import Flask, request
+from flask import Flask
 from flaskext import simpleregistration
 
-from .models import User
-from .forms import LoginForm, SignupForm
+from mirrit.web.models import User
+from mirrit.web.forms import LoginForm, SignupForm
 
 from gevent.monkey import patch_all
 patch_all()
 
 app = Flask('mirrit')
+app.secret_key = 'foobar'
 
 simplereg = simpleregistration.SimpleRegistration(
     app=app,
