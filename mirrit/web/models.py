@@ -5,6 +5,8 @@ class User(Document):
     username = ''
     password = ''
     email = ''
+    config_database = 'mirrit'
+    config_collection = 'users'
 
     @property
     def id(self):
@@ -22,4 +24,7 @@ class User(Document):
 
     def persist(self):
         with Mongo:
-            super(User, self).save(self, w=1)
+            if self._id:
+                super(User, self).__self_class__.update({'_id': self._id}, self, w=1)
+            else:
+                super(User, self).__self_class__.insert(self, w=1)

@@ -34,3 +34,4 @@ class SignupForm(Form):
         if self.validate():
             user = User(self.data)
             user.persist()
+            return user
