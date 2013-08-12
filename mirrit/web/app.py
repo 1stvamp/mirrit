@@ -1,5 +1,9 @@
+# -*- coding: utf-8 -*-
+"""Flask app routes for mirrit web UI
+"""
+
 import os
-from flask import Flask, render_template
+from flask import g, request, url_for, render_template, redirect, Flask
 from flask.json import loads
 from flaskext import simpleregistration
 from flaskext.github import GithubAuth
@@ -40,29 +44,35 @@ github = GithubAuth(
 )
 
 
+@github.access_token_getter
+def token_getter():
+    if g.user is not None:
+        return g.user.github_access_token
+
+
 @app.route('/')
 def home():
     return render_template('index.html')
 
 
-@app.route('/oauth/callback')
+@app.route('/oauth/github/login')
+def auth_github():
+    if g.user.github_access_token is '':
+        return github.authorize(callback_url=url_for('github_callback'))
+    else:
+        return url_for('home')
+
+
+@app.route('/oauth/github/callback')
 @github.authorized_handler
-def authorized(resp):
-    next_url = request.args.get('next') or url_for('index')
-    if resp is None:
-        return redirect(next_url)
+def github_callback(resp):
+    next_url = request.args.get('next') or url_for('home')
 
-    token = resp['access_token']
-    user = User.query.filter_by(github_access_token=token).first()
-    if user is None:
-        user = User(token)
-        db_session.add(user)
-    user.github_access_token = token
-    db_session.commit()
+    if resp is not None and g.user is not None:
+        g.user.github_access_token = resp['access_token']
+        g.user.persist()
 
-    session['user_id'] = user.id
-
-    return 'Success'
+    return redirect(next_url)
 
 if __name__ == '__main__':
     # Probably never used, run with the runserver entrypoint instead
