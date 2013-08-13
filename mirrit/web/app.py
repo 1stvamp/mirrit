@@ -3,15 +3,17 @@
 """
 
 import os
-from flask import g, request, url_for, render_template, redirect, Flask
 from flask.json import loads
-from flaskext import simpleregistration
+from gevent.wsgi import WSGIServer
+from gevent.monkey import patch_all
 from flaskext.github import GithubAuth
+from flaskext import simpleregistration
+from flask import g, request, url_for, render_template, redirect, Flask
 
 from mirrit.web.models import User
 from mirrit.web.forms import LoginForm, SignupForm
 
-from gevent.monkey import patch_all
+# Patch socket calls to go via Gevent
 patch_all()
 
 app = Flask('mirrit')
@@ -50,17 +52,28 @@ def token_getter():
         return g.user.github_access_token
 
 
+@app.context_processor
+def add_user_dict_to_template():
+    user = g.user.for_json() if g.user else {}
+    return {'user': user}
+
+
 @app.route('/')
 def home():
-    return render_template('index.html')
+    context = {}
+    if g.user.github_access_token:
+        resp, repos = github.get_resource('user/repos')
+        context['github_repos'] = loads(repos)
+    return render_template('index.html', **context)
 
 
 @app.route('/oauth/github/login')
-def auth_github():
-    if g.user.github_access_token is '':
-        return github.authorize(callback_url=url_for('github_callback'))
+def github_auth():
+    if not g.user.github_access_token:
+        return github.authorize(callback_url=url_for('github_callback',
+                                                     _external=True))
     else:
-        return url_for('home')
+        return redirect(url_for('home'))
 
 
 @app.route('/oauth/github/callback')
@@ -75,5 +88,5 @@ def github_callback(resp):
     return redirect(next_url)
 
 if __name__ == '__main__':
-    # Probably never used, run with the runserver entrypoint instead
-    app.run(debug=True)
+    app.debug = True
+    WSGIServer(('', 5000), app).serve_forever()

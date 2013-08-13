@@ -9,10 +9,10 @@ class ClassProperty (property):
 
 
 class User(Document):
-    username = ''
-    password = ''
-    email = ''
-    github_access_token = ''
+    username = 'username'
+    password = 'password'
+    email = 'email'
+    github_access_token = 'ghtoken'
     config_database = 'mirrit'
     config_collection = 'users'
 
@@ -24,25 +24,21 @@ class User(Document):
     def user_id(self):
         return unicode(self._id)
 
-    @staticmethod
+    @classmethod
     def get_by_login(cls, username, password):
         with Mongo:
-            return cls.find_one({'username': username,
-                             'password': password})
+            return cls.find_one({cls.username: username,
+                                 cls.password: password})
 
     def persist(self):
         with Mongo:
-            if self._id:
-                super(User, self).__self_class__.update(
-                        {'_id': self._id}, self, w=1)
-            else:
-                super(User, self).__self_class__.insert(self, w=1)
+            User.save(self, safe=True)
 
 
 class Wrapper(object):
     def get(self, id):
         with Mongo:
-            return User.find_one({'_id': ObjectId(id)})
+            return User.find_one({User._id: ObjectId(id)})
 
 wrapper = Wrapper()
 User.query = wrapper

@@ -14,7 +14,10 @@ class LoginForm(Form):
     SECRET_KEY = 'foobar'
 
     def validate(self):
-        user = User.get_by_login(self.username, self.password)
+        if not super(LoginForm, self).validate():
+            return False
+
+        user = User.get_by_login(self.data['username'], self.data['password'])
 
         if user:
             self.user = user
