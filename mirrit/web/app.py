@@ -61,7 +61,7 @@ def add_user_dict_to_template():
 @app.route('/')
 def home():
     context = {}
-    if g.user.github_access_token:
+    if token_getter():
         resp, repos = github.get_resource('user/repos')
         context['github_repos'] = loads(repos)
     return render_template('index.html', **context)
