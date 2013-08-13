@@ -1,8 +1,8 @@
 language: python
+env: LIBGIT2=~/libgit2/_install/ LD_LIBRARY_PATH=~/libgit2/_install/lib
 before_install:
-        - "sudo add-apt-repository ppa:xav0989/libgit2 -y"
-        - "sudo apt-get update -y"
-        - "sudo apt-get install -y libevent-dev libgit2-dev python-dev"
+        - "sudo apt-get install -y libevent-dev python-dev cmake"
+        - "./.travis.sh"
 python:
         - "2.7"
 script: "nosetests tests/"
