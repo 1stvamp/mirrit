@@ -1,7 +1,7 @@
 language: python
 env: LIBGIT2=~/libgit2/_install/ LD_LIBRARY_PATH=~/libgit2/_install/lib
 before_install:
-        - "sudo apt-get install -y libevent-dev python-dev"
+        - "sudo apt-get install -y libev-dev python-dev"
 python:
         - "2.7"
 script: "nosetests tests/"

@@ -2,4 +2,4 @@
 
  * libgit2-dev
  * python-dev
- * libevent-dev
+ * libev-dev
