@@ -8,16 +8,14 @@ from gevent.wsgi import WSGIServer
 from gevent.monkey import patch_all
 from flaskext.github import GithubAuth
 from flaskext import simpleregistration
-from flask import g, request, url_for, render_template, redirect, Flask
+from flask import g, request, url_for, render_template, redirect
 
+from mirrit.web import app
 from mirrit.web.models import User
 from mirrit.web.forms import LoginForm, SignupForm
 
 # Patch socket calls to go via Gevent
 patch_all()
-
-app = Flask('mirrit')
-app.secret_key = 'foobar'
 
 simplereg = simpleregistration.SimpleRegistration(
     app=app,
