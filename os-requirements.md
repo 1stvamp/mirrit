@@ -3,3 +3,4 @@
  * libgit2-dev
  * python-dev
  * libev-dev
+ * pbzip2
