@@ -1,3 +1,6 @@
+from __future__ import print_function
+
+from sys import stdout, stderr, exit
 from flask.ext.sqlalchemy import SQLAlchemy
 from flaskext.bcrypt import Bcrypt
 
@@ -43,7 +46,18 @@ class User(db.Model):
     def verify_password(self, password):
         return bcrypt.check_password_hash(self._password, password)
 
+
+def main():
+    print('Creating database elements with URI "{0}"..'.format(
+            app.config['SQLALCHEMY_DATABASE_URI']), file=stdout)
+
+    try:
+        db.create_all()
+    except Exception as e:
+        print(e, file=stderr)
+        return 1
+    else:
+        return 0
+
 if __name__ == '__main__':
-    print 'Creating database elements with URI "{0}"..'.format(
-            app.config['SQLALCHEMY_DATABASE_URI'])
-    db.create_all()
+    exit(main())
