@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
-"""Flask app routes for mirrit web UI
+"""Flask app views for mirrit web UI
 """
 
 import os
 from flask.json import loads
-from gevent.wsgi import WSGIServer
-from gevent.monkey import patch_all
 from flaskext.github import GithubAuth
 from flaskext import simpleregistration
 from flask import g, request, url_for, render_template, redirect
@@ -13,9 +11,6 @@ from flask import g, request, url_for, render_template, redirect
 from mirrit.web import app
 from mirrit.web.models import User
 from mirrit.web.forms import LoginForm, SignupForm
-
-# Patch socket calls to go via Gevent
-patch_all()
 
 simplereg = simpleregistration.SimpleRegistration(
     app=app,
@@ -84,7 +79,3 @@ def github_callback(resp):
         g.user.persist()
 
     return redirect(next_url)
-
-if __name__ == '__main__':
-    app.debug = True
-    WSGIServer(('', 5000), app).serve_forever()
