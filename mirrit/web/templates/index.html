@@ -1,3 +1,6 @@
+{% extends "bootstrap_responsive.html" %}
+
+{% block body_content %}
 {% if user %}
 hi {{ user.username }}!
 
@@ -15,3 +18,4 @@ hi {{ user.username }}!
 {% else %}
 Please <a href="/login">login</a> or <a href="/signup">signup</a>.
 {% endif %}
+{% endblock %}
