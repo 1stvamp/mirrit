@@ -4,9 +4,7 @@ from flaskext.bcrypt import Bcrypt
 from mirrit.web import app
 
 if 'SQLALCHEMY_DATABASE_URI' not in app.config:
-    from os import path
-    sl_path = path.join(path.dirname(__file__), 'mirrit.db')
-    app.config['SQLALCHEMY_DATABASE_URI'] = sl_path
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////var/tmp/mirrit.db'
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
@@ -44,3 +42,8 @@ class User(db.Model):
 
     def verify_password(self, password):
         return bcrypt.check_password_hash(self._password, password)
+
+if __name__ == '__main__':
+    print 'Creating database elements with URI "{0}"..'.format(
+            app.config['SQLALCHEMY_DATABASE_URI'])
+    db.create_all()
