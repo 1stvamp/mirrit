@@ -9,4 +9,4 @@ app.secret_key = 'foobar'
 app.config['BOOTSTRAP_USE_MINIFIED'] = True
 app.config['BOOTSTRAP_USE_CDN'] = True
 app.config['BOOTSTRAP_FONTAWESOME'] = True
-app.config['BOOTSTRAP_CUSTOM_CSS'] = False
+app.config['BOOTSTRAP_CUSTOM_CSS'] = True
