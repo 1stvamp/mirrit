@@ -15,12 +15,12 @@ from mirrit.web.forms import LoginForm, SignupForm
 simplereg = simpleregistration.SimpleRegistration(
     app=app,
     user_model=User,
-    login_url="/login",
+    login_url="/login/",
     login_form=LoginForm,
     login_redirect="home",
-    logout_url="/logout",
+    logout_url="/logout/",
     logout_redirect="home",
-    signup_url="/signup",
+    signup_url="/signup/",
     signup_form=SignupForm,
     signup_redirect="home"
 )
@@ -60,7 +60,7 @@ def home():
     return render_template('index.html', **context)
 
 
-@app.route('/oauth/github/login')
+@app.route('/oauth/github/login/')
 def github_auth():
     if not g.user.github_access_token:
         return github.authorize(callback_url=url_for('github_callback',
@@ -69,7 +69,7 @@ def github_auth():
         return redirect(url_for('home'))
 
 
-@app.route('/oauth/github/callback')
+@app.route('/oauth/github/callback/')
 @github.authorized_handler
 def github_callback(resp):
     next_url = request.args.get('next') or url_for('home')
