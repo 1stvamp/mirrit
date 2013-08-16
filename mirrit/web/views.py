@@ -9,7 +9,7 @@ from flaskext import simpleregistration
 from flask import g, request, url_for, render_template, redirect
 
 from mirrit.web import app
-from mirrit.web.models import db, User
+from mirrit.web.models import db, User, TrackedRepo
 from mirrit.web.forms import LoginForm, SignupForm
 
 simplereg = simpleregistration.SimpleRegistration(
@@ -74,3 +74,23 @@ def github_callback(resp):
         db.session.commit()
 
     return redirect(next_url)
+
+
+@app.route('/repos/', methods=('PUT', 'POST'))
+def add_repo():
+    repo = TrackedRepo.query.filter_by(path=request.form['path']).first()
+
+    if not repo:
+        repo = TrackedRepo(request.form['path'], g.user)
+        db.session.add(repo)
+        db.session.commit()
+
+    return url_for('home')
+
+
+@app.route('/repos/', methods=('DELETE',))
+def delete_repo():
+    db.session.query(TrackedRepo).filter(
+            path=request.gets.get('path')).delete()
+
+    return url_for('home')

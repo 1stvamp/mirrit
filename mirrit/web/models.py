@@ -55,6 +55,16 @@ class TrackedRepo(db.Model):
     user = db.relationship('User', backref=db.backref('users',
                                                       lazy='dynamic'))
 
+    def __init__(self, path, user=None, user_id=None, provider=None):
+        if provider is None:
+            self.provider = 'github'
+        self.path = path
+        if user_id is not None:
+            self.user_id = user_id
+        if user is not None:
+            self.user = user
+            self.user_id = user.id
+
 
 def main():
     print('Creating database elements with URI "{0}"..'.format(
