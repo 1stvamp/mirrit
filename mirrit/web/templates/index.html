@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 
 {% block body_content %}
-{% if user %}
-hi {{ user.username }}!
+{% if g.user %}
+hi {{ g.user.username }}!
 
-{% if not user.github_access_token %}
+{% if not g.user.github_access_token %}
 <p>Auth with <a href="{{ url_for('github_auth') }}">GitHub</a></p>
 {% else %}
 <h3>github repos</h3>

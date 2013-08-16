@@ -9,7 +9,7 @@ from flaskext import simpleregistration
 from flask import g, request, url_for, render_template, redirect
 
 from mirrit.web import app
-from mirrit.web.models import User
+from mirrit.web.models import db, User
 from mirrit.web.forms import LoginForm, SignupForm
 
 simplereg = simpleregistration.SimpleRegistration(
@@ -45,12 +45,6 @@ def token_getter():
         return g.user.github_access_token
 
 
-@app.context_processor
-def add_user_dict_to_template():
-    user = g.user.for_json() if g.user else {}
-    return {'user': user}
-
-
 @app.route('/')
 def home():
     context = {}
@@ -76,6 +70,7 @@ def github_callback(resp):
 
     if resp is not None and g.user is not None:
         g.user.github_access_token = resp['access_token']
-        g.user.persist()
+        db.session.add(g.user)
+        db.session.commit()
 
     return redirect(next_url)

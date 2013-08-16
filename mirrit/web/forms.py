@@ -2,7 +2,7 @@ from flask.ext.wtf import Form
 from wtforms import TextField, PasswordField
 from wtforms.validators import DataRequired, Email
 
-from mirrit.web.models import User
+from mirrit.web.models import db, User
 
 
 class LoginForm(Form):
@@ -17,9 +17,9 @@ class LoginForm(Form):
         if not super(LoginForm, self).validate():
             return False
 
-        user = User.get_by_login(self.data['username'], self.data['password'])
+        user = User.query.filter_by(username=self.data['username']).first()
 
-        if user:
+        if user and user.verify_password(self.data['password']):
             self.user = user
             return True
         else:
@@ -35,6 +35,7 @@ class SignupForm(Form):
 
     def save(self):
         if self.validate():
-            user = User(self.data)
-            user.persist()
+            user = User(**self.data)
+            db.session.add(user)
+            db.session.commit()
             return user
