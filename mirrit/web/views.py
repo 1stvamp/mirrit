@@ -5,14 +5,14 @@
 import os
 from flask.json import loads
 from flaskext.github import GithubAuth
-from flaskext import simpleregistration
 from flask import g, request, url_for, render_template, redirect
+from flaskext.simpleregistration import SimpleRegistration, login_required
 
 from mirrit.web import app
 from mirrit.web.models import db, User, TrackedRepo
 from mirrit.web.forms import LoginForm, SignupForm
 
-simplereg = simpleregistration.SimpleRegistration(
+simplereg = SimpleRegistration(
     app=app,
     user_model=User,
     login_url="/login/",
@@ -55,6 +55,7 @@ def home():
 
 
 @app.route('/oauth/github/login/')
+@login_required
 def github_auth():
     if not g.user.github_access_token:
         return github.authorize(callback_url=url_for('github_callback',
@@ -64,6 +65,7 @@ def github_auth():
 
 
 @app.route('/oauth/github/callback/')
+@login_required
 @github.authorized_handler
 def github_callback(resp):
     next_url = request.args.get('next') or url_for('home')
@@ -77,6 +79,7 @@ def github_callback(resp):
 
 
 @app.route('/repos/', methods=('PUT', 'POST'))
+@login_required
 def add_repo():
     repo = TrackedRepo.query.filter_by(path=request.form['path']).first()
 
@@ -89,8 +92,10 @@ def add_repo():
 
 
 @app.route('/repos/', methods=('DELETE',))
+@login_required
 def delete_repo():
     db.session.query(TrackedRepo).filter(
-            path=request.gets.get('path')).delete()
+            TrackedRepo.path == request.args.get('path'),
+            TrackedRepo.user_id == g.user.id).delete()
 
     return url_for('home')
