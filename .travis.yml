@@ -1,7 +1,10 @@
-language: python
-env: LIBGIT2=~/libgit2/_install/ LD_LIBRARY_PATH=~/libgit2/_install/lib
+language: "python"
+services:
+        - "mongodb"
 before_install:
         - "sudo apt-get install -y libev-dev python-dev"
 python:
         - "2.7"
+before_script:
+        - "psql -c 'create database mirrit;' -U postgres"
 script: "nosetests tests/"
