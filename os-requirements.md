@@ -1,6 +1,11 @@
 ## OS requirements (e.g. not Python eggs)
 
- * libgit2-dev
+### Required
  * python-dev
  * libev-dev
+ * git-core
+
+### Optional but recommended
  * pbzip2
+ * postgresql
+ * mongodb
