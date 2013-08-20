@@ -4,3 +4,7 @@
 <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
 {{ super() }}
 {%- endblock style %}
+{%- block bootstrap_js_bottom %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/mirrit.js') }}"></script>
+{%- endblock bootstrap_js_bottom %}

@@ -12,9 +12,9 @@ hi {{ g.user.username }}!
     {% for repo in github_repos %}
     <li><a href="{{ repo.url }}">{{ repo.full_name }}</a>
     {% if repo.is_tracked -%}
-    <button class="btn repo-untrack btn-primary" data="github tracked">Untrack</button>
+    <button class="btn btn-primary" data-github="tracked">Untrack</button>
     {%- else -%}
-    <button class="btn repo-track" data="github untracked">Track</button>
+    <button class="btn" data-github="untracked">Track</button>
     {%- endif -%}
     </li>
     {% endfor %}
