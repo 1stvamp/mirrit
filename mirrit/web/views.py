@@ -51,8 +51,15 @@ def home():
     if 'github_repos' in session:
         context['github_repos'] = session['github_repos']
     elif token_getter():
-        resp, repos = github.get_resource('user/repos')
-        session['github_repos'] = context['github_repos'] = loads(repos)
+        _, full_repos = github.get_resource('user/repos')
+        repos = []
+        for repo in loads(full_repos):
+            repos.append({
+                'full_name': repo['full_name'],
+                'git_url': repo['git_url'],
+                'private': repo['private']
+            })
+        session['github_repos'] = context['github_repos'] = repos
     return render_template('index.html', **context)
 
 
