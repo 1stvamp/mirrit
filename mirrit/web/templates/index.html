@@ -17,7 +17,7 @@
 				{% if not g.user.github_access_token %}
 					<p class="lead">Auth with <a href="{{ url_for('github_auth') }}">GitHub</a> to track your repos.</p>
 				{% else %}
-					<table class="github-repos table table-striped">
+					<table class="github-repos table">
 						<caption>Track your <a href="http://github.com/">GitHub</a> repos</caption>
 						<thead>
 							<tr>
@@ -27,7 +27,7 @@
 						</thead>
 						<tbody>
 						{% for repo in github_repos %}
-							<tr>
+							<tr class="{% if repo.is_tracked %}tracked{% endif %}">
 								<td><a href="{{ repo.url }}">{{ repo.full_name }}</a></td>
 								<td>
 									{% if repo.is_tracked -%}

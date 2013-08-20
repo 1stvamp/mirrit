@@ -16,6 +16,7 @@ $ ->
 		el.data 'github', val
 		el.attr 'data-github', val
 		el.toggleClass 'btn-primary'
+		el.parents('tr').toggleClass 'tracked'
 		el.html name
 		
 

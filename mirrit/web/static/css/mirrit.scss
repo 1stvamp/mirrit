@@ -1,7 +1,13 @@
 /* Custom Mirrit bootstrap overrides */
 
 .github-repos {
+	th {
+		text-align: center;
+	}
 	th + th {
 		width: 40%;
+	}
+	tr.tracked {
+		background-color: #f9f9f9;
 	}
 }

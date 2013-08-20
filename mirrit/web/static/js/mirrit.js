@@ -19,6 +19,7 @@
       el.data('github', val);
       el.attr('data-github', val);
       el.toggleClass('btn-primary');
+      el.parents('tr').toggleClass('tracked');
       return el.html(name);
     };
     return $('button[data-github]').click(clickHandler);

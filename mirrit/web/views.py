@@ -5,7 +5,7 @@
 import os
 from flask.json import loads
 from flaskext.github import GithubAuth
-from flask import g, request, url_for, render_template, redirect
+from flask import g, session, request, url_for, render_template, redirect
 from flaskext.simpleregistration import SimpleRegistration, login_required
 
 from mirrit.web import app
@@ -48,9 +48,11 @@ def token_getter():
 @app.route('/')
 def home():
     context = {}
-    if token_getter():
+    if 'github_repos' in session:
+        context['github_repos'] = session['github_repos']
+    elif token_getter():
         resp, repos = github.get_resource('user/repos')
-        context['github_repos'] = loads(repos)
+        session['github_repos'] = context['github_repos'] = loads(repos)
     return render_template('index.html', **context)
 
 
