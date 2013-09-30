@@ -3,6 +3,7 @@
 """
 
 import os
+from hashlib import sha1
 from flask.json import loads
 from flaskext.github import GithubAuth
 from flask import g, session, request, url_for, render_template, redirect
@@ -48,18 +49,24 @@ def token_getter():
 @app.route('/')
 def home():
     context = {}
+    if g.user and 'tracked_repos' not in session:
+        session['tracked_repos'] = []
+        for repo in TrackedRepo.query.filter_by(user_id=g.user.id).all():
+            session['tracked_repos'].append(repo.path)
+
     if 'github_repos' in session:
         context['github_repos'] = session['github_repos']
     elif token_getter():
         _, full_repos = github.get_resource('user/repos')
-        repos = []
+        repos = {}
         for repo in loads(full_repos):
-            repos.append({
+            repos[sha1(repo['url']).hexdigest()] = {
                 'full_name': repo['full_name'],
                 'git_url': repo['git_url'],
                 'private': repo['private'],
-                'url': repo['url']
-            })
+                'url': repo['url'],
+                'is_tracked': repo['url'] in session['tracked_repos']
+            }
         session['github_repos'] = context['github_repos'] = repos
     return render_template('index.html', **context)
 
@@ -99,14 +106,28 @@ def add_repo():
         db.session.add(repo)
         db.session.commit()
 
+    tracked_repos = session.get('tracked_repos', [])
+    if path not in tracked_repos:
+        tracked_repos.append(path)
+
+    session['github_repos'][sha1(path).hexdigest()]['is_tracked'] = True
+
     return url_for('home')
 
 
 @app.route('/repos/', methods=('DELETE',))
 @login_required
 def delete_repo():
+    path = request.args.get('path')
+
     db.session.query(TrackedRepo).filter(
-            TrackedRepo.path == request.args.get('path'),
+            TrackedRepo.path == path,
             TrackedRepo.user_id == g.user.id).delete()
+
+    tracked_repos = session.get('tracked_repos', [])
+    if path in tracked_repos:
+        tracked_repos.remove(path)
+
+    session['github_repos'][sha1(path).hexdigest()]['is_tracked'] = False
 
     return url_for('home')

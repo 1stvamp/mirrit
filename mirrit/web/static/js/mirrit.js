@@ -12,7 +12,10 @@
       if (el.data('github') === 'tracked') {
         name = 'Track';
         val = 'untracked';
-        $["delete"]("/repos/?path=" + path);
+        $.ajax({
+          type: 'DELETE',
+          url: "/repos/?path=" + path
+        });
       } else {
         name = 'Untrack';
         val = 'tracked';
