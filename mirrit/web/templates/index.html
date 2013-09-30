@@ -28,7 +28,7 @@
 						<tbody>
 						{% for repo in github_repos %}
 							<tr class="{% if repo.is_tracked %}tracked{% endif %}">
-								<td><a href="{{ repo.url }}">{{ repo.full_name }}</a></td>
+								<td><a href="{{ repo.url }}" class="repo-name">{{ repo.full_name }}</a></td>
 								<td>
 									{% if repo.is_tracked -%}
 										<button class="btn btn-block btn-primary" data-github="tracked">Untrack</button>

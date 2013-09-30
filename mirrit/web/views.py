@@ -57,7 +57,8 @@ def home():
             repos.append({
                 'full_name': repo['full_name'],
                 'git_url': repo['git_url'],
-                'private': repo['private']
+                'private': repo['private'],
+                'url': repo['url']
             })
         session['github_repos'] = context['github_repos'] = repos
     return render_template('index.html', **context)
@@ -90,10 +91,11 @@ def github_callback(resp):
 @app.route('/repos/', methods=('PUT', 'POST'))
 @login_required
 def add_repo():
-    repo = TrackedRepo.query.filter_by(path=request.form['path']).first()
+    path = request.args.get('path')
+    repo = TrackedRepo.query.filter_by(path=path).first()
 
     if not repo:
-        repo = TrackedRepo(request.form['path'], g.user)
+        repo = TrackedRepo(path, g.user)
         db.session.add(repo)
         db.session.commit()
 
