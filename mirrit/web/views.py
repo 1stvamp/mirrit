@@ -56,18 +56,24 @@ def home():
 
     if 'github_repos' in session:
         context['github_repos'] = session['github_repos']
+
     elif token_getter():
         _, full_repos = github.get_resource('user/repos')
-        repos = {}
-        for repo in loads(full_repos):
-            repos[sha1(repo['url']).hexdigest()] = {
+        repos = []
+        keys = {}
+        for i, repo in enumerate(loads(full_repos)):
+            repos.append({
                 'full_name': repo['full_name'],
                 'git_url': repo['git_url'],
                 'private': repo['private'],
                 'url': repo['url'],
                 'is_tracked': repo['url'] in session['tracked_repos']
-            }
+            })
+            keys[sha1(repo['url']).hexdigest()] = i
+
+        session['github_repos_keys'] = keys
         session['github_repos'] = context['github_repos'] = repos
+
     return render_template('index.html', **context)
 
 
@@ -110,7 +116,8 @@ def add_repo():
     if path not in tracked_repos:
         tracked_repos.append(path)
 
-    session['github_repos'][sha1(path).hexdigest()]['is_tracked'] = True
+    key = session['github_repos_keys'][sha1(path).hexdigest()]
+    session['github_repos'][key]['is_tracked'] = True
 
     return url_for('home')
 
@@ -128,6 +135,7 @@ def delete_repo():
     if path in tracked_repos:
         tracked_repos.remove(path)
 
-    session['github_repos'][sha1(path).hexdigest()]['is_tracked'] = False
+    key = session['github_repos_keys'][sha1(path).hexdigest()]
+    session['github_repos'][key]['is_tracked'] = False
 
     return url_for('home')
