@@ -38,6 +38,9 @@ github = GithubAuth(
     client_secret=config['client_secret'],
     session_key='user_id'
 )
+if 'scheme' not in config:
+    config['scheme'] = 'http'
+app.MIRRIT_CONFIG = config
 
 
 @github.access_token_getter
@@ -82,7 +85,7 @@ def home():
 def github_auth():
     if not g.user.github_access_token:
         return github.authorize(callback_url=url_for('github_callback',
-                                                     _external=True))
+            _external=True, _scheme=app.MIRRIT_CONFIG['scheme']))
     else:
         return redirect(url_for('home'))
 
